@@ -1,0 +1,37 @@
+# Publishes the media to GitHub Pages: only images and videos, never anything a browser would run as a page.
+name: Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Keep only media
+        run: |
+          mkdir _site
+          find . -path ./.git -prune -o -path ./_site -prune -o -type f \
+            \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' -o -iname '*.gif' -o -iname '*.mp4' \) \
+            -print0 | xargs -0 -r cp --parents -t _site
+          echo "Published: $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
+          # Pages refuses sites over 1 GB: stop well before, so old media gets pruned first (README).
+          size=$(du -sm _site | cut -f1)
+          [ "$size" -lt 900 ] || { echo "::error::$size MB of media: prune what's already published (README)"; exit 1; }
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5

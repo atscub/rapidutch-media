@@ -1,6 +1,6 @@
 # RapiDutch media
 
-Images and reels for RapiDutch's social posts, served at **https://abrahamtoledo.dev/rapidutch-media/<path>** so Buffer can fetch them (`atscub.github.io/rapidutch-media/…` redirects there: the account's Pages domain). Buffer takes media only by a public URL that stays up until the post publishes. The Head of Growth adds files here; see ADR-0122 in the app's repository.
+Images and reels for RapiDutch's social posts, served at **https://media.rapidutch.nl/<path>** so Buffer can fetch them (a CNAME to GitHub Pages). Buffer takes media only by a public URL that stays up until the post publishes. The Head of Growth adds files here; see ADR-0122 in the app's repository.
 
 - **Media only:** `.png`, `.jpg`, `.jpeg`, `.webp`, `.gif`, `.mp4`. The Pages workflow publishes nothing else, so no page, script or document is ever served from here.
 - **Nothing personal, ever:** no learner's data and no private document. This repository is public.

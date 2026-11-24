@@ -12,11 +12,11 @@ concurrency:
   group: pages
   cancel-in-progress: false
 jobs:
-  deploy:
+  # Two jobs, as GitHub's starter workflow: deploy-pages in the same job as the upload sometimes listed the run's
+  # artifacts before the ~860 MB upload showed up there and failed with «No artifacts named github-pages» (21 and
+  # 24 Nov; the COO's read of run 45294701975: the listing came 0.35 s after the upload finalized).
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v7
       - name: Keep only media
@@ -33,5 +33,12 @@ jobs:
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v5
